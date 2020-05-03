@@ -1,21 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classes from "./Person.css"
-
-const person = (props) => {
-
-   const style = {
-      "@media (minWidth: 500px)" : {
-         width: "450px"
-      }
-   };
-
-   return (
-      <div className={classes.Person} style={style}>
-         <p onClick={props.click}>I'm a {props.name} and I am {props.age} years old!!</p>
-         <p>{props.children}</p>
-         <input type="text" onChange={props.changed} value={props.name}/>
-      </div>
-   );
+import Aux from '../../../hoc/Auxilary';
+import withClass from '../../../hoc/WithClass';
+class Person extends Component {
+   render() {
+      console.log('[Person.js] rendering....');
+      return (
+         <Aux>
+            <p onClick={this.props.click}>I'm a {this.props.name} and I am {this.props.age} years old!!</p>
+            <p>{this.props.children}</p>
+            <input type="text" onChange={this.props.changed} value={this.props.name} />
+         </Aux>
+      );
+   }
 }
 
-export default person;
+Person.propTypes = {
+   click: PropTypes.func,
+   name: PropTypes.string,
+   age: PropTypes.number,
+   changed: PropTypes.func
+};
+
+export default withClass(Person, classes.Person);
