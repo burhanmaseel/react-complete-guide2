@@ -6,6 +6,8 @@ import UserOutput from "../components/UserOutput/UserOutput";
 import Cockpit from '../components/Cockpit/Cockpit';
 import withClass from '../hoc/WithClass';
 import Aux from '../hoc/Auxilary';
+import AuthContext from '../context/auth-context';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -33,7 +35,8 @@ class App extends Component {
     inputValue: "",
     showPersons: false,
     showCockpit: true,
-    changeCounter: 0
+    changeCounter: 0,
+    authenticated: false
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -86,6 +89,10 @@ class App extends Component {
     });
   }
 
+  loginHandler = () => {
+    this.setState({ authenticated: true });
+  }
+
 
   render() {
     console.log('[App.js] render');
@@ -95,7 +102,8 @@ class App extends Component {
       persons = (<Persons
         clicked={this.deletePersonHandler}
         changed={this.nameChangedHandler}
-        persons={this.state.persons} />
+        persons={this.state.persons}
+        isAuthenticated={this.state.authenticated} />
       );
     }
 
@@ -106,12 +114,17 @@ class App extends Component {
         <button onClick={() => {
           this.setState({ showCockpit: false });
         }}>Remove Cockpit</button>
-        {this.state.showCockpit ? <Cockpit
-          title={this.props.appTitle}
-          showPersons={this.state.showPersons}
-          personsLength={this.state.persons.length}
-          clicked={this.togglePersonsHandler} /> : null}
-        {persons}
+        <AuthContext.Provider value={{ authenticated: this.state.authenticated, login: this.loginHandler }} >
+          {this.state.showCockpit ? (
+            <Cockpit
+              title={this.props.appTitle}
+              showPersons={this.state.showPersons}
+              personsLength={this.state.persons.length}
+              clicked={this.togglePersonsHandler}
+            />
+          ) : null}
+          {persons}
+        </AuthContext.Provider>
 
         <UserInput changedInput={this.inputChangeHandler} />
         <UserOutput inputValue={this.state.inputValue} />
